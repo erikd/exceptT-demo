@@ -25,6 +25,7 @@ library
                      , Naive.Result
 
   build-depends:       base                         >= 4.8      && < 5
+                     , bytestring                   == 0.10.*
 
 executable             naive
   default-language:    Haskell2010
@@ -33,5 +34,6 @@ executable             naive
   main-is:             naive.hs
 
   build-depends:       base                         >= 4.8      && < 5
+                     , bytestring                   == 0.10.*
                      , exceptT-demo
 

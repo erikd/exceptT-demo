@@ -1,8 +1,11 @@
+{-# LANGUAGE OverloadedStrings  #-}
 module Naive.Result
   ( Result (..)
   , processWithDb
   , renderResult
   ) where
+
+import Data.ByteString (ByteString)
 
 import Naive.Cat
 import Naive.Db
@@ -19,5 +22,5 @@ processWithDb :: DbConn -> Cat -> Dog -> IO Result
 processWithDb _ _ _ = pure Result
 
 -- If Result was a little more complex we could have a proper render function.
-renderResult :: Result -> String
-renderResult = const "result"
+renderResult :: Result -> ByteString
+renderResult = const $ "result"

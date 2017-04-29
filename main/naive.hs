@@ -1,10 +1,13 @@
 
+import Data.ByteString.Char8 (readFile, writeFile)
+
 import Naive.Cat (Cat, parseCat)
 import Naive.Db (withDatabaseConnection)
 import Naive.Dog (Dog, parseDog)
 import Naive.Result (Result, processWithDb, renderResult)
 
-import System.IO (readFile, writeFile)
+import Prelude hiding (readFile, writeFile)
+
 import System.Environment (getArgs)
 import System.Exit (exitFailure)
 
