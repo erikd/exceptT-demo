@@ -24,6 +24,11 @@ library
                      , Naive.Db
                      , Naive.Result
 
+                     , Improved.Cat
+                     , Improved.Dog
+                     , Improved.Db
+                     , Improved.Result
+
   build-depends:       base                         >= 4.8      && < 5
                      , bytestring                   == 0.10.*
 
@@ -36,4 +41,15 @@ executable             naive
   build-depends:       base                         >= 4.8      && < 5
                      , bytestring                   == 0.10.*
                      , exceptT-demo
+
+executable             improved
+  default-language:    Haskell2010
+  ghc-options:         -Wall -fwarn-tabs -O2
+  hs-source-dirs:      main
+  main-is:             improved.hs
+
+  build-depends:       base                         >= 4.8      && < 5
+                     , bytestring                   == 0.10.*
+                     , exceptT-demo
+                     , errors                       == 2.2.*
 
