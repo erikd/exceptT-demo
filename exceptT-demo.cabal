@@ -22,7 +22,6 @@ library
   exposed-modules:     Naive.Cat
                      , Naive.Dog
                      , Naive.Db
-                     , Naive.Result
 
                      , Improved.Cat
                      , Improved.Dog

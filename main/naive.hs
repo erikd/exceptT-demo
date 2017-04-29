@@ -2,9 +2,8 @@
 import Data.ByteString.Char8 (readFile, writeFile)
 
 import Naive.Cat (Cat, parseCat)
-import Naive.Db (withDatabaseConnection)
+import Naive.Db (Result, processWithDb, renderResult, withDatabaseConnection)
 import Naive.Dog (Dog, parseDog)
-import Naive.Result (Result, processWithDb, renderResult)
 
 import Prelude hiding (readFile, writeFile)
 
