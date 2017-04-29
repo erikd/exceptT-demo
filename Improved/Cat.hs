@@ -5,7 +5,8 @@ module Improved.Cat
   , renderCatParseError
   ) where
 
-import Data.ByteString.Char8 (ByteString, pack)
+import Data.ByteString.Char8 (ByteString)
+import Data.Text (Text, pack)
 
 -- A trivial Cat data type
 data Cat = Cat
@@ -22,5 +23,5 @@ parseCat :: ByteString -> Either CatParseError Cat
 parseCat = const $ Right Cat
 
 -- Would not use `show` for a real error type.
-renderCatParseError :: CatParseError -> ByteString
+renderCatParseError :: CatParseError -> Text
 renderCatParseError = pack . show

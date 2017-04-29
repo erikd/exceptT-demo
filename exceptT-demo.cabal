@@ -31,6 +31,7 @@ library
 
   build-depends:       base                         >= 4.8      && < 5
                      , bytestring                   == 0.10.*
+                     , text                         == 1.2.*
 
 executable             naive
   default-language:    Haskell2010
@@ -52,4 +53,5 @@ executable             improved
                      , bytestring                   == 0.10.*
                      , exceptT-demo
                      , errors                       == 2.2.*
+                     , text                         == 1.2.*
 

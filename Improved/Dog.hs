@@ -5,7 +5,8 @@ module Improved.Dog
   , renderDogParseError
   ) where
 
-import Data.ByteString.Char8 (ByteString, pack)
+import Data.ByteString.Char8 (ByteString)
+import Data.Text (Text, pack)
 
 -- A trivial Dog data type
 data Dog = Dog
@@ -22,5 +23,5 @@ parseDog :: ByteString -> Either DogParseError Dog
 parseDog = const $ Right Dog
 
 -- Would not use `show` for a real error type.
-renderDogParseError :: DogParseError -> ByteString
+renderDogParseError :: DogParseError -> Text
 renderDogParseError = pack . show

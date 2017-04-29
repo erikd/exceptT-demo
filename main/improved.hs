@@ -1,25 +1,29 @@
+{-# LANGUAGE OverloadedStrings #-}
+import           Control.Exception (SomeException)
+import           Control.Monad.IO.Class (liftIO)
+import           Control.Error
 
-import Control.Exception (SomeException)
-import Control.Monad.IO.Class (liftIO)
-import Control.Error
+import           Data.ByteString.Char8 (readFile, writeFile)
+import           Data.Monoid ((<>))
+import           Data.Text (Text)
+import qualified Data.Text as T
+import qualified Data.Text.IO as T
 
-import Data.ByteString.Char8 (readFile, writeFile)
+import           Improved.Cat (Cat, CatParseError, parseCat, renderCatParseError)
+import           Improved.Db (withDatabaseConnection)
+import           Improved.Dog (Dog, DogParseError, parseDog, renderDogParseError)
+import           Improved.Result (Result, processWithDb, renderResult)
 
-import Improved.Cat (Cat, CatParseError, parseCat)
-import Improved.Db (withDatabaseConnection)
-import Improved.Dog (Dog, DogParseError, parseDog)
-import Improved.Result (Result, processWithDb, renderResult)
+import           Prelude hiding (readFile, writeFile)
 
-import Prelude hiding (readFile, writeFile)
-
-import System.Environment (getArgs)
-import System.Exit (exitFailure)
+import           System.Environment (getArgs)
+import           System.Exit (exitFailure)
 
 data ProcessError
   = ECat CatParseError
   | EDog DogParseError
-  | EReadFile FilePath String
-  | EWriteFile FilePath String
+  | EReadFile FilePath Text
+  | EWriteFile FilePath Text
 
 
 main :: IO ()
@@ -32,13 +36,16 @@ main = do
 
 report :: Either ProcessError () -> IO ()
 report (Right _) = pure ()
-report (Left e) =
-  putStrLn $
-    case e of
-      ECat _ -> "Cat parse error."
-      EDog _ -> "Dog parse error."
-      EReadFile fpath msg -> "Error reading '" ++ fpath ++ "' : " ++ msg
-      EWriteFile fpath msg -> "Error writing '" ++ fpath ++ "' : " ++ msg
+report (Left e) = T.putStrLn $ renderProcessError e
+
+
+renderProcessError :: ProcessError -> Text
+renderProcessError pe =
+  case pe of
+    ECat ec -> renderCatParseError ec
+    EDog ed -> renderDogParseError ed
+    EReadFile fpath msg -> "Error reading '" <> T.pack fpath <> "' : " <> msg
+    EWriteFile fpath msg -> "Error writing '" <> T.pack fpath <> "' : " <> msg
 
 
 readCatFile :: FilePath -> ExceptT ProcessError IO Cat
@@ -48,7 +55,7 @@ readCatFile fpath = do
   hoistEither . fmapL ECat $ parseCat bs
   where
     handler :: SomeException -> ProcessError
-    handler e = EReadFile fpath (show e)
+    handler e = EReadFile fpath (T.pack $ show e)
 
 readDogFile :: FilePath -> ExceptT ProcessError IO Dog
 readDogFile fpath = do
@@ -57,7 +64,7 @@ readDogFile fpath = do
   hoistEither . fmapL EDog $ parseDog bs
   where
     handler :: SomeException -> ProcessError
-    handler e = EReadFile fpath (show e)
+    handler e = EReadFile fpath (T.pack $ show e)
 
 writeResultFile :: FilePath -> Result -> ExceptT ProcessError IO ()
 writeResultFile fpath result = do
@@ -65,7 +72,7 @@ writeResultFile fpath result = do
   handleExceptT handler . writeFile fpath $ renderResult result
   where
     handler :: SomeException -> ProcessError
-    handler e = EWriteFile fpath (show e)
+    handler e = EWriteFile fpath (T.pack $ show e)
 
 processFiles :: FilePath -> FilePath -> FilePath -> ExceptT ProcessError IO ()
 processFiles infile1 infile2 outfile = do
