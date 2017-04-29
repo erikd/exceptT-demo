@@ -27,10 +27,10 @@ library
                      , Improved.Cat
                      , Improved.Dog
                      , Improved.Db
-                     , Improved.Result
 
   build-depends:       base                         >= 4.8      && < 5
                      , bytestring                   == 0.10.*
+                     , errors                       == 2.2.*
                      , text                         == 1.2.*
 
 executable             naive
@@ -50,8 +50,8 @@ executable             improved
   main-is:             improved.hs
 
   build-depends:       base                         >= 4.8      && < 5
-                     , bytestring                   == 0.10.*
+                     , bytestring
                      , exceptT-demo
-                     , errors                       == 2.2.*
-                     , text                         == 1.2.*
+                     , errors
+                     , text
 

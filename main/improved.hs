@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Control.Exception (SomeException)
 import           Control.Monad.IO.Class (liftIO)
-import           Control.Error
+import           Control.Error (ExceptT, fmapL, fmapLT, handleExceptT, hoistEither, runExceptT)
 
 import           Data.ByteString.Char8 (readFile, writeFile)
 import           Data.Monoid ((<>))
@@ -10,9 +10,8 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as T
 
 import           Improved.Cat (Cat, CatParseError, parseCat, renderCatParseError)
-import           Improved.Db (withDatabaseConnection)
+import           Improved.Db (DbError, Result, processWithDb, renderDbError, renderResult, withDatabaseConnection)
 import           Improved.Dog (Dog, DogParseError, parseDog, renderDogParseError)
-import           Improved.Result (Result, processWithDb, renderResult)
 
 import           Prelude hiding (readFile, writeFile)
 
@@ -24,7 +23,7 @@ data ProcessError
   | EDog DogParseError
   | EReadFile FilePath Text
   | EWriteFile FilePath Text
-
+  | EDb DbError
 
 main :: IO ()
 main = do
@@ -32,7 +31,9 @@ main = do
   case args of
     [inFile1, infile2, outFile] ->
             report =<< runExceptT (processFiles inFile1 infile2 outFile)
-    _ -> putStrLn "Expected three file names." >> exitFailure
+    _ -> do
+        putStrLn "Expected three file names, the first two are imput, the last output."
+        exitFailure
 
 report :: Either ProcessError () -> IO ()
 report (Right _) = pure ()
@@ -46,6 +47,7 @@ renderProcessError pe =
     EDog ed -> renderDogParseError ed
     EReadFile fpath msg -> "Error reading '" <> T.pack fpath <> "' : " <> msg
     EWriteFile fpath msg -> "Error writing '" <> T.pack fpath <> "' : " <> msg
+    EDb dbe -> renderDbError dbe
 
 
 readCatFile :: FilePath -> ExceptT ProcessError IO Cat
@@ -78,6 +80,6 @@ processFiles :: FilePath -> FilePath -> FilePath -> ExceptT ProcessError IO ()
 processFiles infile1 infile2 outfile = do
   cat <- readCatFile infile1
   dog <- readDogFile infile2
-  result <- liftIO . withDatabaseConnection $ \ db ->
+  result <- fmapLT EDb . withDatabaseConnection $ \ db ->
                processWithDb db cat dog
   writeResultFile outfile result
