@@ -32,7 +32,7 @@ main = do
     [inFile1, infile2, outFile] ->
             report =<< runExceptT (processFiles inFile1 infile2 outFile)
     _ -> do
-        putStrLn "Expected three file names, the first two are imput, the last output."
+        putStrLn "Expected three file names, the first two are input, the last output."
         exitFailure
 
 report :: Either ProcessError () -> IO ()
@@ -52,7 +52,7 @@ renderProcessError pe =
 
 readCatFile :: FilePath -> ExceptT ProcessError IO Cat
 readCatFile fpath = do
-  liftIO $ putStrLn "Reading Cat file."
+  liftIO . putStrLn $ "Reading Cat file '" ++ fpath ++ "'."
   bs <- handleExceptT handler $ readFile fpath
   hoistEither . fmapL ECat $ parseCat bs
   where
@@ -61,7 +61,7 @@ readCatFile fpath = do
 
 readDogFile :: FilePath -> ExceptT ProcessError IO Dog
 readDogFile fpath = do
-  liftIO $ putStrLn "Reading Dog file."
+  liftIO . putStrLn $ "Reading Dog file '" ++ fpath ++ "'."
   bs <- handleExceptT handler $ readFile fpath
   hoistEither . fmapL EDog $ parseDog bs
   where
@@ -70,7 +70,7 @@ readDogFile fpath = do
 
 writeResultFile :: FilePath -> Result -> ExceptT ProcessError IO ()
 writeResultFile fpath result = do
-  liftIO $ putStrLn "Writing Result file."
+  liftIO . putStrLn $ "Writing Result file '" ++ fpath ++ "'."
   handleExceptT handler . writeFile fpath $ renderResult result
   where
     handler :: SomeException -> ProcessError

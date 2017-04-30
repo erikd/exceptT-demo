@@ -19,17 +19,17 @@ main = do
 
 readCatFile :: FilePath -> IO Cat
 readCatFile fpath = do
-  putStrLn "Reading Cat file."
+  putStrLn $ "Reading Cat file '" ++ fpath ++ "'."
   parseCat <$> readFile fpath
 
 readDogFile :: FilePath -> IO Dog
 readDogFile fpath = do
-  putStrLn "Reading Dog file."
+  putStrLn $ "Reading Dog file '" ++ fpath ++ "'."
   parseDog <$> readFile fpath
 
 writeResultFile :: FilePath -> Result -> IO ()
 writeResultFile fpath result = do
-  putStrLn "Writing Result file."
+  putStrLn $ "Writing Result file '" ++ fpath ++ "'."
   writeFile fpath $ renderResult result
 
 processFiles :: FilePath -> FilePath -> FilePath -> IO ()
