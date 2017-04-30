@@ -15,6 +15,10 @@ maintainer:          erikd@mega-nerd.com
 build-type:          Simple
 cabal-version:       >= 1.10
 
+-- Doesn't build with earlier GHC versions because it needs Applicative as a
+-- superclass of Monad.
+tested-with: GHC == 7.10.3, GHC == 8.0.2, GHC == 8.2.0
+
 library
   default-language:    Haskell2010
   ghc-options:         -Wall -fwarn-tabs
@@ -31,6 +35,7 @@ library
                      , bytestring                   == 0.10.*
                      , errors                       == 2.2.*
                      , text                         == 1.2.*
+                     , transformers                 >= 0.4      && < 0.6
 
 executable             naive
   default-language:    Haskell2010
@@ -38,8 +43,8 @@ executable             naive
   hs-source-dirs:      main
   main-is:             naive.hs
 
-  build-depends:       base                         >= 4.8      && < 5
-                     , bytestring                   == 0.10.*
+  build-depends:       base
+                     , bytestring
                      , exceptT-demo
 
 executable             improved
@@ -48,9 +53,10 @@ executable             improved
   hs-source-dirs:      main
   main-is:             improved.hs
 
-  build-depends:       base                         >= 4.8      && < 5
+  build-depends:       base
                      , bytestring
-                     , exceptT-demo
                      , errors
+                     , exceptT-demo
                      , text
+                     , transformers
 
