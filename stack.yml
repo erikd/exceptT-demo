@@ -1,0 +1,10 @@
+resolver: lts-8.12
+
+packages:
+- '.'
+
+extra-deps: [errors-2.2.0]
+
+flags: {}
+
+extra-package-dbs: []
