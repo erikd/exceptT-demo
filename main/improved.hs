@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-import           Control.Exception (SomeException)
+import           Control.Exception (IOException)
 import           Control.Monad.IO.Class (liftIO)
 import           Control.Error (ExceptT, fmapL, fmapLT, handleExceptT, hoistEither, runExceptT)
 
@@ -56,7 +56,7 @@ readCatFile fpath = do
   bs <- handleExceptT handler $ readFile fpath
   hoistEither . fmapL ECat $ parseCat bs
   where
-    handler :: SomeException -> ProcessError
+    handler :: IOException -> ProcessError
     handler e = EReadFile fpath (T.pack $ show e)
 
 readDogFile :: FilePath -> ExceptT ProcessError IO Dog
@@ -65,7 +65,7 @@ readDogFile fpath = do
   bs <- handleExceptT handler $ readFile fpath
   hoistEither . fmapL EDog $ parseDog bs
   where
-    handler :: SomeException -> ProcessError
+    handler :: IOException -> ProcessError
     handler e = EReadFile fpath (T.pack $ show e)
 
 writeResultFile :: FilePath -> Result -> ExceptT ProcessError IO ()
@@ -73,7 +73,7 @@ writeResultFile fpath result = do
   liftIO . putStrLn $ "Writing Result file '" ++ fpath ++ "'."
   handleExceptT handler . writeFile fpath $ renderResult result
   where
-    handler :: SomeException -> ProcessError
+    handler :: IOException -> ProcessError
     handler e = EWriteFile fpath (T.pack $ show e)
 
 processFiles :: FilePath -> FilePath -> FilePath -> ExceptT ProcessError IO ()
